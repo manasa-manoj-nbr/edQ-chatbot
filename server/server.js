@@ -8,7 +8,15 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.post("/", (req, res) => res.send("Hello from Express!"));
+// Health check endpoint
+app.get("/ping", (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    message: "Server is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
