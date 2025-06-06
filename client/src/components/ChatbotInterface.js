@@ -60,7 +60,7 @@ export default function ChatbotInterface() {
   setIsLoading(true);
 
   try {
-    const response = await axios.post('http://localhost:5000/chat', {
+    const response = await axios.post(`${process.env.RAILWAY_URL}/chat`, {
     message: inputMessage
     });
     const botReply = {

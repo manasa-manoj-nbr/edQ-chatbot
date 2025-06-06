@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.post("/", (req, res) => res.send("Hello from Express!"));
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
