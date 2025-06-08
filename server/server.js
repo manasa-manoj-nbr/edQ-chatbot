@@ -1,9 +1,9 @@
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
 
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -24,7 +24,7 @@ app.post("/chat", async (req, res) => {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         messages: [{ role: "user", content: message }],
         temperature: 0.7,
       },
@@ -42,6 +42,7 @@ app.post("/chat", async (req, res) => {
     res.status(500).json({ error: "Failed to get response from OpenAI" });
   }
 });
+console.log("OpenAI API Key:",process.env.OPENAI_API_KEY);
 
 const MOODLE_URL = process.env.MOODLE_URL;
 const TOKEN = process.env.MOODLE_TOKEN;
@@ -84,3 +85,4 @@ main(); // Call the function
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

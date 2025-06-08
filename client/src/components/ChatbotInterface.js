@@ -60,8 +60,9 @@ export default function ChatbotInterface() {
   setIsLoading(true);
 
   try {
-    const response = await axios.post(`${process.env.REACT_APP_RAILWAY_URL}/chat`, {
-    message: inputMessage
+    const response = await axios.post(`https://edquery.app.n8n.cloud/webhook-test/chatbot`, {
+  question: inputMessage,
+  userid: 9
     });
     const botReply = {
       id: messages.length + 2,
