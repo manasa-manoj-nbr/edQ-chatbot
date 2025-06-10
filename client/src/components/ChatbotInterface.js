@@ -63,13 +63,18 @@ export default function ChatbotInterface() {
     const response = await axios.post(`https://edquery.app.n8n.cloud/webhook-test/chatbot`, {
   question: inputMessage,
   userid: 9
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
-    const botReply = {
-      id: messages.length + 2,
-      type: 'bot',
-      content: response.data.reply,
-      timestamp: new Date()
-    };
+      
+        const botReply = {
+    id: messages.length + 2,
+    type: 'bot',
+    content: response.data.output || 'No response received from AI.',
+    timestamp: new Date()
+  };
 
     setMessages(prev => [...prev, botReply]);
   } catch (error) {
