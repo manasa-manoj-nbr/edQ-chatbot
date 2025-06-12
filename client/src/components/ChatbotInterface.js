@@ -75,7 +75,7 @@ const userId = params.get("userid") || 9;
         const botReply = {
     id: messages.length + 2,
     type: 'bot',
-    content: response.data.output || 'No response received from AI.',
+    content: response.data.output || "Hmm, I couldn't find an answer just now. Please try again or rephrase your question.",
     timestamp: new Date()
   };
 
