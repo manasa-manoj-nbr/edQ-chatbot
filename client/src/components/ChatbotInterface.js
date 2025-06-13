@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Book, User, Bot, MessageCircle, Lightbulb, HelpCircle, Sun, Moon } from 'lucide-react';
+import { Send, Book, User, Bot, MessageCircle, BookOpen, Gamepad,BarChart,CalendarCheck, Sun, Moon } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown'; 
 export default function ChatbotInterface() {
