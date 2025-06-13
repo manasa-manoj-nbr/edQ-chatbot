@@ -109,9 +109,10 @@ const userId = params.get("userid") || 9;
   };
 
   const quickActions = [
-    { icon: Book, text: "Explain a concept", action: () => setInputMessage("Can you explain...") },
-    { icon: HelpCircle, text: "Ask a question", action: () => setInputMessage("I have a question about...") },
-    { icon: Lightbulb, text: "Get study tips", action: () => setInputMessage("Give me study tips for...") }
+    { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
+    { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for...") },
+    { icon: BarChart, text: "Show my progress", action: () => setInputMessage("Show me my learning progress") },
+    { icon: CalendarCheck, text: "Plan my learning", action: () => setInputMessage("Help me plan my learning schedule") },
   ];
 
   return (
