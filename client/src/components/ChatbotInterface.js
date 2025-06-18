@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Book, User, Bot, MessageCircle, Lightbulb, HelpCircle, Sun, Moon } from 'lucide-react';
+import { Send, User, Bot, MessageCircle, BookOpen, Gamepad,BarChart,CalendarCheck, Sun, Moon } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown'; 
 export default function ChatbotInterface() {
@@ -109,9 +109,10 @@ const userId = params.get("userid");
   };
 
   const quickActions = [
-    { icon: Book, text: "Explain a concept", action: () => setInputMessage("Can you explain...") },
-    { icon: HelpCircle, text: "Ask a question", action: () => setInputMessage("I have a question about...") },
-    { icon: Lightbulb, text: "Get study tips", action: () => setInputMessage("Give me study tips for...") }
+    { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
+    { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for...") },
+    { icon: BarChart, text: "Show my progress", action: () => setInputMessage("Show me my learning progress") },
+    { icon: CalendarCheck, text: "Plan my learning", action: () => setInputMessage("Help me plan my learning schedule") },
   ];
 
   return (
