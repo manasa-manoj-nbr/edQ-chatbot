@@ -50,7 +50,7 @@ export default function ChatbotInterface() {
   if (!inputMessage.trim()) return;
     const params = new URLSearchParams(window.location.search);
     console.log(params);
-const userId = params.get("userid") || 9;
+const userId = params.get("userid");
   const userMessage = {
     id: messages.length + 1,
     type: 'user',
@@ -62,10 +62,10 @@ const userId = params.get("userid") || 9;
   setInputMessage('');
   setIsLoading(true);
 
-  try {
-    const response = await axios.post(`https://edquery.app.n8n.cloud/webhook/chatbot`, {
-  question: inputMessage,
-  userid: userId
+     try {
+    const response = await axios.post(`http://localhost:5678/webhook-test/chatbot`, {
+        question: inputMessage,
+        userid: userId
     }, {
         headers: {
             'Content-Type': 'application/json'
