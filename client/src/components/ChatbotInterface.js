@@ -63,7 +63,7 @@ const userId = params.get("userid");
   setIsLoading(true);
 
      try {
-    const response = await axios.post(`http://localhost:5678/webhook-test/chatbot`, {
+    const response = await axios.post(`http://localhost:5678/webhook/chatbot`, {
         question: inputMessage,
         userid: userId
     }, {
