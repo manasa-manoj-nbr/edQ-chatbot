@@ -176,7 +176,7 @@ const userId = params.get("userid");
 <ReactMarkdown
   components={{
     a: ({ node, ...props }) => (
-      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-light" />
+      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-normal" />
     ),
   }}
 >
