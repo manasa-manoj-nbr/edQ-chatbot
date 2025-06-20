@@ -174,11 +174,6 @@ const userId = params.get("userid");
                   : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600'
               }`}>
 <ReactMarkdown
-  components={{
-    a: ({ node, ...props }) => (
-      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline" />
-    ),
-  }}
 >
   {message.content}
 </ReactMarkdown>
