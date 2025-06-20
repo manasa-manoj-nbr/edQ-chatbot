@@ -173,9 +173,15 @@ const userId = params.get("userid");
                   ? 'bg-green-500 dark:bg-green-600 text-white'
                   : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600'
               }`}>
-        <ReactMarkdown class="text-sm leading-relaxed prose dark:prose-invert max-w-none">
-          {message.content}
-        </ReactMarkdown>
+<ReactMarkdown
+  components={{
+    a: ({ node, ...props }) => (
+      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline" />
+    ),
+  }}
+>
+  {message.content}
+</ReactMarkdown>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
