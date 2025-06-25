@@ -150,9 +150,22 @@ export default function ChatbotInterface() {
                   {message.content}
                 </ReactMarkdown>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between mr-8">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between">
                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 {message.type === 'bot' && (
+                  <button
+                    className="flex mr-8 text-sm text-gray-500 hover:text-blue-600"
+                    onClick={() => {
+                      const plainText = message.content.replace(/<[^>]+>/g, '');
+                      navigator.clipboard.writeText(plainText);
+                      toast('Copied to clipboard!');
+                    }}
+                  >
+                    <ClipboardCopy className="w-4 h-4 mr-1" />
+                    Copy
+                  </button>
+                )}
+                {message.type === 'user' && (
                   <button
                     className="flex  text-sm text-gray-500 hover:text-blue-600"
                     onClick={() => {
@@ -162,7 +175,6 @@ export default function ChatbotInterface() {
                     }}
                   >
                     <ClipboardCopy className="w-4 h-4 mr-1" />
-                    Copy
                   </button>
                 )}
               </p>
