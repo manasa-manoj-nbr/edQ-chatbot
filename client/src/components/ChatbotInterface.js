@@ -61,7 +61,7 @@ export default function ChatbotInterface() {
 
     try {
       const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chat2`, {
-        question: inputMessage,
+        chatInput: inputMessage,
         userid: userId
       }, {
         headers: {
