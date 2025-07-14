@@ -231,7 +231,7 @@ export default function ChatbotInterface() {
           </div>
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || !userId.trim() || isLoading}
+            disabled={!inputMessage.trim() || isLoading}
             className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg p-3 transition-colors duration-200"
           >
             <Send className="w-5 h-5" />
