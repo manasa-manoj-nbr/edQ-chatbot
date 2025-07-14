@@ -62,7 +62,6 @@ export default function ChatbotInterface() {
     try {
       const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chatbot`, {
         chatInput: inputMessage,
-        userid: userId
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -219,16 +218,6 @@ export default function ChatbotInterface() {
 
       <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4 transition-colors duration-300">
               <div className="flex flex-col  md:flex-row  md:items-center space-y-2 md:space-y-0 md:space-x-3">
-                  <div>
-                      
-          <input
-            type="number"
-            placeholder="User ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            className="w-full md:w-28 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
-          />
-                  </div>
           <div className="flex-1">
             <textarea
               value={inputMessage}
