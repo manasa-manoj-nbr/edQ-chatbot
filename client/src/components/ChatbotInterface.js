@@ -110,7 +110,7 @@ const userId = params.get("userid");
 
   const quickActions = [
     { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
-    { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for...") },
+    { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for") },
     { icon: BarChart, text: "Show my progress", action: () => setInputMessage("Show me my learning progress") },
     { icon: CalendarCheck, text: "Plan my learning", action: () => setInputMessage("Help me plan my learning schedule") },
   ];
@@ -235,7 +235,7 @@ const userId = params.get("userid");
       </div>
 
       {/* Quick Actions */}
-      {messages.length === 1 && (
+      { (
         <div className="px-6 py-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick actions to get started:</p>
           <div className="flex flex-wrap gap-2">
