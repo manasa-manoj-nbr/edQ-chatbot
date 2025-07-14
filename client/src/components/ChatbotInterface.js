@@ -60,7 +60,7 @@ export default function ChatbotInterface() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chat2`, {
+      const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chatbot`, {
         chatInput: inputMessage,
         userid: userId
       }, {
