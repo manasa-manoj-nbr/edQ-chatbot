@@ -10,7 +10,7 @@ export default function ChatbotInterface() {
     {
       id: 1,
       type: 'bot',
-      content: 'Hello! I\'m your AI Education Assistant. I\'m here to help you learn, answer questions, and provide explanations on various topics. How can I assist you today?',
+      content: 'Hello! I\'m EdQ AI. Your AI Education Assistant. I\'m here to help you learn, answer questions, and provide explanations on various topics. How can I assist you today?',
       timestamp: new Date()
     }
   ]);
@@ -122,11 +122,11 @@ const userId = params.get("userid");
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 dark:bg-blue-500 p-2 rounded-lg">
-              <MessageCircle className="w-6 h-6 text-white" />
+            <div className="rounded-lg">
+                          <img src='./logo.jpg' className="w-20 h-12 ml-8" alt='logo'></img>
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">EduBot AI Assistant</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">EdQ AI </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">Your personal learning companion</p>
             </div>
           </div>
