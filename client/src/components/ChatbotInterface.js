@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, MessageCircle, BookOpen, Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from 'react-markdown'; 
 import { toast, Toaster } from 'sonner';
 
 export default function ChatbotInterface() {
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -14,7 +15,6 @@ export default function ChatbotInterface() {
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
-  const [userId, setUserId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const messagesEndRef = useRef(null);
@@ -27,6 +27,7 @@ export default function ChatbotInterface() {
     scrollToBottom();
   }, [messages]);
 
+  // Load dark mode preference from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -45,52 +46,56 @@ export default function ChatbotInterface() {
     }
   }, [isDarkMode]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !userId.trim()) return;
+ const handleSendMessage = async () => {
+  if (!inputMessage.trim()) return;
+    const params = new URLSearchParams(window.location.search);
+    console.log(params);
+const userId = params.get("userid");
+  const userMessage = {
+    id: messages.length + 1,
+    type: 'user',
+    content: inputMessage,
+    timestamp: new Date()
+  };
 
-    const userMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      content: inputMessage,
-      timestamp: new Date()
-    };
+  setMessages(prev => [...prev, userMessage]);
+  setInputMessage('');
+  setIsLoading(true);
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chatbot`, {
-        chatInput: inputMessage,
-      }, {
+  try {
+    const response = await axios.post(`https://edqueriesai.app.n8n.cloud/webhook/chatbot`, {
+  question: inputMessage,
+  userid: userId
+    }, {
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         }
-      });
+    });
 
-      const botReply = {
+        const botReply = {
+    id: messages.length + 2,
+    type: 'bot',
+    content: response.data.output || "Hmm, I couldn't find an answer just now. Please try again or rephrase your question.",
+    timestamp: new Date()
+  };
+
+    setMessages(prev => [...prev, botReply]);
+  } catch (error) {
+    console.error("OpenAI error:", error);
+    setMessages(prev => [
+      ...prev,
+      {
         id: messages.length + 2,
         type: 'bot',
-        content: response.data.output || "Hmm, I couldn't find an answer just now. Please try again or rephrase your question.",
+        content: `Sorry, I couldn't get a response from the AI. Please try again. Error: ${error.message}`,
         timestamp: new Date()
-      };
+      }
+    ]);
+  }
 
-      setMessages(prev => [...prev, botReply]);
-    } catch (error) {
-      console.error("OpenAI error:", error);
-      setMessages(prev => [
-        ...prev,
-        {
-          id: messages.length + 2,
-          type: 'bot',
-          content: `Sorry, I couldn't get a response from the AI. Please try again. Error: ${error.message}`,
-          timestamp: new Date()
-        }
-      ]);
-    }
+  setIsLoading(false);
+};
 
-    setIsLoading(false);
-  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -111,9 +116,9 @@ export default function ChatbotInterface() {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-      <Toaster position="bottom-center" />
-
+      <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+           <Toaster position="bottom-center" />
+      {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -121,24 +126,54 @@ export default function ChatbotInterface() {
               <MessageCircle className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">EdQueries AI Assistant</h1>
+              <h1 className="text-xl font-semibold text-gray-800 dark:text-gray-100">EduBot AI Assistant</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">Your personal learning companion</p>
             </div>
           </div>
-          <button onClick={toggleTheme} className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
-            {isDarkMode ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5 text-gray-600" />}
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+            aria-label="Toggle theme"
+          >
+            {isDarkMode ? (
+              <Sun className="w-5 h-5 text-yellow-500" />
+            ) : (
+              <Moon className="w-5 h-5 text-gray-600" />
+            )}
           </button>
         </div>
       </div>
 
+      {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.map((message) => (
-          <div key={message.id} className={`flex items-start space-x-3 ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-green-500 dark:bg-green-600' : 'bg-blue-500 dark:bg-blue-600'}`}>
-              {message.type === 'user' ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
+          <div
+            key={message.id}
+            className={`flex items-start space-x-3 ${
+              message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+            }`}
+          >
+            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+              message.type === 'user'
+                ? 'bg-green-500 dark:bg-green-600'
+                : 'bg-blue-500 dark:bg-blue-600'
+            }`}>
+              {message.type === 'user' ? (
+                <User className="w-4 h-4 text-white" />
+              ) : (
+                <Bot className="w-4 h-4 text-white" />
+              )}
             </div>
-            <div className={`max-w-xs lg:max-w-md xl:max-w-lg ${message.type === 'user' ? 'text-right' : ''}`}>
-              <div className={`rounded-2xl px-4 py-3 transition-colors duration-200 ${message.type === 'user' ? 'bg-green-500 dark:bg-green-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600'}`}>
+            <div className={`max-w-xs lg:max-w-md xl:max-w-lg ${
+              message.type === 'user' ? 'text-right' : ''
+            }`}>
+              <div className={`rounded-2xl px-4 py-3 transition-colors duration-200 ${
+                message.type === 'user'
+                  ? 'bg-green-500 dark:bg-green-600 text-white'
+                  : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600'
+              }`}>
                 <ReactMarkdown
                   components={{
                     a: ({ node, ...props }) => (
@@ -148,35 +183,35 @@ export default function ChatbotInterface() {
                 >
                   {message.content}
                 </ReactMarkdown>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                {message.type === 'bot' && (
-                  <button
-                    className="flex mr-8 text-sm text-gray-500 hover:text-blue-600"
-                    onClick={() => {
-                      const plainText = message.content.replace(/<[^>]+>/g, '');
-                      navigator.clipboard.writeText(plainText);
-                      toast('Copied to clipboard!');
-                    }}
-                  >
-                    <ClipboardCopy className="w-4 h-4 mr-1" />
-                    Copy
-                  </button>
-                )}
-                {message.type === 'user' && (
-                  <button
-                    className="flex  text-sm text-gray-500 hover:text-blue-600"
-                    onClick={() => {
-                      const plainText = message.content.replace(/<[^>]+>/g, '');
-                      navigator.clipboard.writeText(plainText);
-                      toast('Copied to clipboard!');
-                    }}
-                  >
-                    <ClipboardCopy className="w-4 h-4 mr-1" />
-                  </button>
-                )}
-              </p>
+                    </div>
+               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between">
+                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                 {message.type === 'bot' && (
+                   <button
+                     className="flex mr-8 text-sm text-gray-500 hover:text-blue-600"
+                     onClick={() => {
+                       const plainText = message.content.replace(/<[^>]+>/g, '');
+                       navigator.clipboard.writeText(plainText);
+                       toast('Copied to clipboard!');
+                     }}
+                   >
+                     <ClipboardCopy className="w-4 h-4 mr-1" />
+                     Copy
+                   </button>
+                 )}
+                 {message.type === 'user' && (
+                   <button
+                     className="flex  text-sm text-gray-500 hover:text-blue-600"
+                     onClick={() => {
+                       const plainText = message.content.replace(/<[^>]+>/g, '');
+                       navigator.clipboard.writeText(plainText);
+                       toast('Copied to clipboard!');
+                     }}
+                   >
+                     <ClipboardCopy className="w-4 h-4 mr-1" />
+                   </button>
+                 )}
+               </p>                   
             </div>
           </div>
         ))}
@@ -195,9 +230,11 @@ export default function ChatbotInterface() {
             </div>
           </div>
         )}
+
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick Actions */}
       {messages.length === 1 && (
         <div className="px-6 py-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick actions to get started:</p>
@@ -216,8 +253,9 @@ export default function ChatbotInterface() {
         </div>
       )}
 
+      {/* Input Area */}
       <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4 transition-colors duration-300">
-              <div className="flex flex-col  md:flex-row  md:items-center space-y-2 md:space-y-0 md:space-x-3">
+        <div className="flex items-end space-x-3">
           <div className="flex-1">
             <textarea
               value={inputMessage}
