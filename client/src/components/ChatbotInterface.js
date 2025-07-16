@@ -126,7 +126,7 @@ const userId = params.get("userid");
                           <img src='./logo.jpg' className="w-20 h-12 ml-8" alt='logo'></img>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">EdQ AI </h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">EdQ AI - Beta Version</h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">Your personal learning companion</p>
             </div>
           </div>
@@ -277,6 +277,9 @@ const userId = params.get("userid");
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
           Press Enter to send, Shift+Enter for new line
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+          EdQ AI can make mistakes, so double-check it
         </p>
       </div>
     </div>
