@@ -63,7 +63,7 @@ const userId = params.get("userid");
   setIsLoading(true);
 
   try {
-    const response = await axios.post(`https://edqai.app.n8n.cloud/webhook/chatbot`, {
+    const response = await axios.post(`https://edqueryaichat.app.n8n.cloud/webhook/chatbot`, {
   question: inputMessage,
   userid: userId
     }, {
