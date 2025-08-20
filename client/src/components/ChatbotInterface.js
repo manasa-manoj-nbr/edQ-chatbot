@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, MessageCircle, BookOpen, Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
+import { Send, User, Bot, Mic, BookOpen, Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown'; 
 import { toast, Toaster } from 'sonner';
@@ -45,7 +45,9 @@ export default function ChatbotInterface() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-
+    const handleAudio = async () => {
+        const input = 1;
+}
  const handleSendMessage = async () => {
   if (!inputMessage.trim()) return;
     const params = new URLSearchParams(window.location.search);
@@ -63,7 +65,7 @@ const userId = params.get("userid");
   setIsLoading(true);
 
   try {
-    const response = await axios.post(`https://edqai.app.n8n.cloud/webhook/chatbot`, {
+    const response = await axios.post(`https://edqueries.app.n8n.cloud/webhook/chatbot`, {
   question: inputMessage,
   userid: userId
     }, {
@@ -273,6 +275,12 @@ const userId = params.get("userid");
             className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg p-3 transition-colors duration-200"
           >
             <Send className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleAudio}
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg p-3 transition-colors duration-200"
+          >
+            <Mic className="w-5 h-5" />
           </button>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
