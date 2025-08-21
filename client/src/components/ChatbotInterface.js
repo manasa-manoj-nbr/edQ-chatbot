@@ -45,9 +45,9 @@ export default function ChatbotInterface() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-    const handleAudio = async () => {
-        const input = 1;
-}
+//     const handleAudio = async () => {
+//         const input = 1;
+// }
  const handleSendMessage = async () => {
   if (!inputMessage.trim()) return;
     const params = new URLSearchParams(window.location.search);
@@ -113,7 +113,7 @@ const userId = params.get("userid");
   const quickActions = [
     { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
     { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for") },
-    { icon: BarChart, text: "Show my progress", action: () => setInputMessage("Show me my learning progress") },
+    { icon: BarChart, text: "Show my achievements", action: () => setInputMessage("Show me my achievements so far") },
     { icon: CalendarCheck, text: "Plan my learning", action: () => setInputMessage("Help me plan my learning schedule") },
   ];
 
@@ -276,12 +276,12 @@ const userId = params.get("userid");
           >
             <Send className="w-5 h-5" />
           </button>
-          <button
+          {/* <button
             onClick={handleAudio}
             className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg p-3 transition-colors duration-200"
           >
             <Mic className="w-5 h-5" />
-          </button>
+          </button> */}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
           Press Enter to send, Shift+Enter for new line
