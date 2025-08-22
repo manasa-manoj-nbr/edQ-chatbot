@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, Mic, BookOpen, Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
+import { Send, User, Bot, Mic, BookOpen, Goal,Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown'; 
 import { toast, Toaster } from 'sonner';
@@ -112,9 +112,10 @@ const userId = params.get("userid");
 
   const quickActions = [
     { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
-    { icon: Gamepad, text: "Find a game", action: () => setInputMessage("Find a learning game for") },
-    { icon: BarChart, text: "Show my achievements", action: () => setInputMessage("Show me my achievements so far") },
-    { icon: CalendarCheck, text: "Plan my learning", action: () => setInputMessage("Help me plan my learning schedule") },
+    { icon: Gamepad, text: "Find", action: () => setInputMessage("Find a learning game for") },
+    { icon: Goal, text: "My achievements", action: () => setInputMessage("Show me my achievements so far") },
+    { icon: CalendarCheck, text: "Learning", action: () => setInputMessage("Help me plan my learning schedule") },
+    { icon: BarChart, text: "Progress", action: () => setInputMessage("Help me track my learning progress") },
   ];
 
   return (
