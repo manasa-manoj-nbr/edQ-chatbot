@@ -113,9 +113,10 @@ const userId = params.get("userid");
   const quickActions = [
     { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
     { icon: Gamepad, text: "Find", action: () => setInputMessage("Find a learning game for") },
-    { icon: Goal, text: "My achievements", action: () => setInputMessage("Show me my achievements so far") },
-    { icon: CalendarCheck, text: "Learning", action: () => setInputMessage("Help me plan my learning schedule") },
-    { icon: BarChart, text: "Progress", action: () => setInputMessage("Help me track my learning progress") },
+    { icon: Goal, text: "Competencies", action: () => setInputMessage("Show competencies and badges") },
+    { icon: CalendarCheck, text: "Learning Plan", action: () => setInputMessage("Show me my learning plan") },
+    { icon: BarChart, text: "Course Completion", action: () => setInputMessage("Help me track my course progress") },
+    {  text: "Latest Games & Courses", action: () => setInputMessage("Show me the latest games and courses available") },
   ];
 
   return (
