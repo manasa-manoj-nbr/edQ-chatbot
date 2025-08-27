@@ -116,7 +116,7 @@ const userId = params.get("userid");
     { icon: Goal, text: "Competencies", action: () => setInputMessage("Show competencies and badges") },
     { icon: CalendarCheck, text: "Learning Plan", action: () => setInputMessage("Show me my learning plan") },
     { icon: BarChart, text: "Course Completion", action: () => setInputMessage("Help me track my course progress") },
-    {  text: "Latest Games & Courses", action: () => setInputMessage("Show me the latest games and courses available") },
+    { icon: BarChart, text: "Latest Games & Courses", action: () => setInputMessage("Show me the latest games and courses available") },
   ];
 
   return (
