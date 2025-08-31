@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, Bot, Mic, BookOpen, Goal,Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
-import axios from 'axios';
-import ReactMarkdown from 'react-markdown'; 
+import { Send, User, Bot, Mic, BookOpen, Goal, Gamepad, BarChart, CalendarCheck, Sun, Moon, ClipboardCopy } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { toast, Toaster } from 'sonner';
 
 export default function ChatbotInterface() {
@@ -45,93 +44,88 @@ export default function ChatbotInterface() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-//     const handleAudio = async () => {
-//         const input = 1;
-// }
- const handleSendMessage = async () => {
-  if (!inputMessage.trim()) return;
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim()) return;
     const params = new URLSearchParams(window.location.search);
-    console.log(params);
-const userId = params.get("userid");
-  const userMessage = {
-    id: messages.length + 1,
-    type: 'user',
-    content: inputMessage,
-    timestamp: new Date()
-  };
+    const userId = params.get("userid");
+    const userMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      content: inputMessage,
+      timestamp: new Date()
+    };
 
-  setMessages(prev => [...prev, userMessage]);
-  setInputMessage('');
-  setIsLoading(true);
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
 
+    try {
+      const botReplyId = messages.length + 2;
+      setMessages(prev => [
+        ...prev,
+        {
+          id: botReplyId,
+          type: 'bot',
+          content: "",
+          timestamp: new Date()
+        }
+      ]);
 
-  try {
-    const botReplyId = messages.length + 2;
-    setMessages(prev => [
-      ...prev,
-      {
-        id: botReplyId,
-        type: 'bot',
-        content: "",
-        timestamp: new Date()
-      }
-    ]);
+      const response = await fetch('https://edqueries.app.n8n.cloud/webhook/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          question: inputMessage,
+          userid: userId
+        })
+      });
 
-    const response = await fetch('https://edqueries.app.n8n.cloud/webhook/chatbot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        question: inputMessage,
-        userid: userId
-      })
-    });
-
-    if (!response.body) throw new Error('No response body');
-    const reader = response.body.getReader();
-    let botReplyContent = "";
-    const decoder = new TextDecoder();
-    let done = false;
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      if (value) {
-        const textChunk = decoder.decode(value, { stream: true }).trim();
-        try {
-          const parts = textChunk.split("\n").filter(line => line.trim()); // in case multiple JSON per chunk
-          for (const part of parts) {
-            const parsed = JSON.parse(part);
-            if (parsed.type === "item" && parsed.content) {
-              botReplyContent += parsed.content;
-              setMessages(prev =>
-                prev.map(msg =>
-                  msg.id === botReplyId ? { ...msg, content: botReplyContent } : msg
-                )
-              );
+      if (!response.body) throw new Error('No response body');
+      const reader = response.body.getReader();
+      let botReplyContent = "";
+      const decoder = new TextDecoder();
+      let done = false;
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          const textChunk = decoder.decode(value, { stream: true }).trim();
+          try {
+            const parts = textChunk.split("\n").filter(line => line.trim());
+            for (const part of parts) {
+              const parsed = JSON.parse(part);
+              if (parsed.type === "item" && parsed.content) {
+                botReplyContent += parsed.content;
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === botReplyId ? { ...msg, content: botReplyContent } : msg
+                  )
+                );
+              }
             }
+          } catch (e) {
+            console.warn("Non-JSON chunk:", textChunk);
           }
-        } catch (e) {
-          console.warn("Non-JSON chunk:", textChunk);
         }
       }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Streaming error:", error);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: messages.length + 2,
+          type: 'bot',
+          content: `Sorry, I couldn't get a response from the AI. Please try again. Error: ${error.message}`,
+          timestamp: new Date()
+        }
+      ]);
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  } catch (error) {
-    console.error("Streaming error:", error);
-    setMessages(prev => [
-      ...prev,
-      {
-        id: messages.length + 2,
-        type: 'bot',
-        content: `Sorry, I couldn't get a response from the AI. Please try again. Error: ${error.message}`,
-        timestamp: new Date()
-      }
-    ]);
-    setIsLoading(false);
-  }
-};
-
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -154,14 +148,15 @@ const userId = params.get("userid");
   ];
 
   return (
-      <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-           <Toaster position="bottom-center" />
+    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
+      <Toaster position="bottom-center" />
+      
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="rounded-lg">
-                          <img src='./logo.jpg' className="w-20 h-12 ml-8" alt='logo'></img>
+              <img src='./logo.jpg' className="w-20 h-12 ml-8" alt='logo'></img>
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">EdQ AI - Beta Version</h1>
@@ -212,84 +207,75 @@ const userId = params.get("userid");
                   ? 'bg-green-500 dark:bg-green-600 text-white'
                   : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600'
               }`}>
-                <ReactMarkdown
-                  components={{
-                    a: ({ node, ...props }) => (
-                      <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-normal" />
-                    ),
-                  }}
-                >
-                  {message.content}
-                </ReactMarkdown>
-                    </div>
-               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between">
-                   {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                 {message.type === 'bot' && (
-                   <button
-                     className="flex mr-8 text-sm text-gray-500 hover:text-blue-600"
-                     onClick={() => {
-                       const plainText = message.content.replace(/<[^>]+>/g, '');
-                       navigator.clipboard.writeText(plainText);
-                       toast('Copied to clipboard!');
-                     }}
-                   >
-                     <ClipboardCopy className="w-4 h-4 mr-1" />
-                     Copy
-                   </button>
-                 )}
-                 {message.type === 'user' && (
-                   <button
-                     className="flex  text-sm text-gray-500 hover:text-blue-600"
-                     onClick={() => {
-                       const plainText = message.content.replace(/<[^>]+>/g, '');
-                       navigator.clipboard.writeText(plainText);
-                       toast('Copied to clipboard!');
-                     }}
-                   >
-                     <ClipboardCopy className="w-4 h-4 mr-1" />
-                   </button>
-                 )}
-               </p>                   
+                {message.content ? (
+                  <ReactMarkdown
+                    components={{
+                      a: ({ node, ...props }) => (
+                        <a {...props} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-normal" />
+                      ),
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                ) : (
+                  // Typing indicator for empty bot message
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex flex-row gap-4 justify-between">
+                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {message.type === 'bot' && message.content && (
+                  <button
+                    className="flex mr-8 text-sm text-gray-500 hover:text-blue-600"
+                    onClick={() => {
+                      const plainText = message.content.replace(/<[^>]+>/g, '');
+                      navigator.clipboard.writeText(plainText);
+                      toast('Copied to clipboard!');
+                    }}
+                  >
+                    <ClipboardCopy className="w-4 h-4 mr-1" />
+                    Copy
+                  </button>
+                )}
+                {message.type === 'user' && (
+                  <button
+                    className="flex text-sm text-gray-500 hover:text-blue-600"
+                    onClick={() => {
+                      const plainText = message.content.replace(/<[^>]+>/g, '');
+                      navigator.clipboard.writeText(plainText);
+                      toast('Copied to clipboard!');
+                    }}
+                  >
+                    <ClipboardCopy className="w-4 h-4 mr-1" />
+                  </button>
+                )}
+              </p>
             </div>
           </div>
         ))}
-
-        {isLoading && (
-          <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center">
-              <Bot className="w-4 h-4 text-white" />
-            </div>
-            <div className="bg-white dark:bg-gray-700 rounded-2xl px-4 py-3 shadow-sm border border-gray-200 dark:border-gray-600 transition-colors duration-200">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div ref={messagesEndRef} />
       </div>
 
       {/* Quick Actions */}
-      { (
-        <div className="px-6 py-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick actions to get started:</p>
-          <div className="flex flex-wrap gap-2">
-            {quickActions.map((action, index) => (
-              <button
-                key={index}
-                onClick={action.action}
-                className="flex items-center space-x-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-200"
-              >
-                <action.icon className="w-4 h-4" />
-                <span>{action.text}</span>
-              </button>
-            ))}
-          </div>
+      <div className="px-6 py-4">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick actions to get started:</p>
+        <div className="flex flex-wrap gap-2">
+          {quickActions.map((action, index) => (
+            <button
+              key={index}
+              onClick={action.action}
+              className="flex items-center space-x-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-200"
+            >
+              <action.icon className="w-4 h-4" />
+              <span>{action.text}</span>
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Input Area */}
       <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 py-4 transition-colors duration-300">
@@ -312,12 +298,6 @@ const userId = params.get("userid");
           >
             <Send className="w-5 h-5" />
           </button>
-          {/* <button
-            onClick={handleAudio}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg p-3 transition-colors duration-200"
-          >
-            <Mic className="w-5 h-5" />
-          </button> */}
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
           Press Enter to send, Shift+Enter for new line
