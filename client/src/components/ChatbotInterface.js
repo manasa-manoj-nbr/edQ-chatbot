@@ -64,26 +64,61 @@ const userId = params.get("userid");
   setInputMessage('');
   setIsLoading(true);
 
+
   try {
-    const response = await axios.post(`https://edqueries.app.n8n.cloud/webhook/chatbot`, {
-  question: inputMessage,
-  userid: userId
-    }, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
+    const botReplyId = messages.length + 2;
+    setMessages(prev => [
+      ...prev,
+      {
+        id: botReplyId,
+        type: 'bot',
+        content: "",
+        timestamp: new Date()
+      }
+    ]);
+
+    const response = await fetch('https://edqueries.app.n8n.cloud/webhook/chatbot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        question: inputMessage,
+        userid: userId
+      })
     });
 
-        const botReply = {
-    id: messages.length + 2,
-    type: 'bot',
-    content: response.data.output || "Hmm, I couldn't find an answer just now. Please try again or rephrase your question.",
-    timestamp: new Date()
-  };
-
-    setMessages(prev => [...prev, botReply]);
+    if (!response.body) throw new Error('No response body');
+    const reader = response.body.getReader();
+    let botReplyContent = "";
+    const decoder = new TextDecoder();
+    let done = false;
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      if (value) {
+        const textChunk = decoder.decode(value, { stream: true }).trim();
+        try {
+          const parts = textChunk.split("\n").filter(line => line.trim()); // in case multiple JSON per chunk
+          for (const part of parts) {
+            const parsed = JSON.parse(part);
+            if (parsed.type === "item" && parsed.content) {
+              botReplyContent += parsed.content;
+              setMessages(prev =>
+                prev.map(msg =>
+                  msg.id === botReplyId ? { ...msg, content: botReplyContent } : msg
+                )
+              );
+            }
+          }
+        } catch (e) {
+          console.warn("Non-JSON chunk:", textChunk);
+        }
+      }
+    }
+    setIsLoading(false);
   } catch (error) {
-    console.error("OpenAI error:", error);
+    console.error("Streaming error:", error);
     setMessages(prev => [
       ...prev,
       {
@@ -93,9 +128,8 @@ const userId = params.get("userid");
         timestamp: new Date()
       }
     ]);
+    setIsLoading(false);
   }
-
-  setIsLoading(false);
 };
 
 
