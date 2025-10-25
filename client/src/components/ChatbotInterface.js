@@ -83,6 +83,10 @@ export default function ChatbotInterface() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+
       if (!response.body) throw new Error('No response body');
       const reader = response.body.getReader();
       let botReplyContent = "";
@@ -111,19 +115,45 @@ export default function ChatbotInterface() {
           }
         }
       }
+
+      // Check if we received any content
+      if (!botReplyContent || botReplyContent.trim() === "") {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === botReplyId 
+              ? { ...msg, content: "Hmm, I couldn't find an answer just now. Please try again or rephrase your question." } 
+              : msg
+          )
+        );
+      }
+      
       setIsLoading(false);
     } catch (error) {
       console.error("Streaming error:", error);
-      setMessages(prev => [
-        ...prev,
-        {
-          id: messages.length + 2,
-          type: 'bot',
-          content: `Sorry, I couldn't get a response from the AI. Please try again. Error: ${error.message}`,
-          timestamp: new Date()
-        }
-      ]);
       setIsLoading(false);
+      
+      // Update the bot message with error instead of adding a new one
+      const botReplyId = messages.length + 2;
+      setMessages(prev => {
+        const existingBotMessage = prev.find(msg => msg.id === botReplyId);
+        if (existingBotMessage) {
+          return prev.map(msg =>
+            msg.id === botReplyId 
+              ? { ...msg, content: "Hmm, I couldn't find an answer just now. Please try again or rephrase your question." }
+              : msg
+          );
+        } else {
+          return [
+            ...prev,
+            {
+              id: botReplyId,
+              type: 'bot',
+              content: "Hmm, I couldn't find an answer just now. Please try again or rephrase your question.",
+              timestamp: new Date()
+            }
+          ];
+        }
+      });
     }
   };
 
