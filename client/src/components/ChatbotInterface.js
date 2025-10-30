@@ -171,7 +171,7 @@ export default function ChatbotInterface() {
   const quickActions = [
     { icon: BookOpen, text: "List courses", action: () => setInputMessage("Show me available courses") },
     { icon: Gamepad, text: "Find", action: () => setInputMessage("Find a learning game for") },
-    { icon: Goal, text: "Competencies", action: () => setInputMessage("Show competencies and badges") },
+    { icon: Goal, text: "Competencies", action: () => setInputMessage("Show my completed competencies") },
     { icon: CalendarCheck, text: "Learning Plan", action: () => setInputMessage("Show me my learning plan") },
     { icon: BarChart, text: "Course Completion", action: () => setInputMessage("Help me track my course progress") },
     { icon: BarChart, text: "Latest Games & Courses", action: () => setInputMessage("Show me the latest games and courses available") },
